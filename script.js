@@ -148,7 +148,7 @@ function startHearts() {
 
 const weddingDate =
     new Date(
-        "August 21, 2026 19:00:00"
+        "Octobar 9, 2026 19:00:00"
     ).getTime();
 
 const countdown =
