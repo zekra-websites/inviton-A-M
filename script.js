@@ -1,5 +1,11 @@
 // =========================================
 // Wedding Invitation
+// Mohamed & Mariam
+// =========================================
+
+
+// =========================================
+// العناصر
 // =========================================
 
 const openBtn = document.getElementById("openBtn");
@@ -9,31 +15,34 @@ const content = document.querySelector(".content");
 const music = document.getElementById("music");
 const musicBtn = document.getElementById("musicBtn");
 
+const shareBtn = document.getElementById("shareBtn");
+
 
 // =========================================
 // فتح الدعوة
 // =========================================
 
-openBtn.addEventListener("click", function () {
+openBtn.addEventListener("click", function(){
 
     welcomeScreen.style.opacity = "0";
-    welcomeScreen.style.transition = "opacity .8s ease";
 
-    setTimeout(function () {
+    setTimeout(function(){
 
         welcomeScreen.style.display = "none";
+
         content.style.display = "block";
 
-        if (music) {
-            music.play().catch(function () {});
+        if(music){
+
+            music.play().catch(function(){});
+
         }
 
         startHearts();
 
-        revealCards();
-        revealSections();
+        revealElements();
 
-    }, 800);
+    },800);
 
 });
 
@@ -42,16 +51,16 @@ openBtn.addEventListener("click", function () {
 // الموسيقى
 // =========================================
 
-musicBtn.addEventListener("click", function () {
+musicBtn.addEventListener("click",function(){
 
-    if (music.paused) {
+    if(music.paused){
 
-        music.play().catch(function () {});
+        music.play().catch(function(){});
 
         musicBtn.innerHTML =
             '<i class="fa-solid fa-volume-high"></i>';
 
-    } else {
+    }else{
 
         music.pause();
 
@@ -64,47 +73,100 @@ musicBtn.addEventListener("click", function () {
 
 
 // =========================================
-// القلوب
+// مشاركة الدعوة
+// =========================================
+
+shareBtn.addEventListener("click",async function(){
+
+    const shareData = {
+
+        title:"محمد & مريم - دعوة الزفاف",
+
+        text:"يسعدنا دعوتكم لمشاركة فرحتنا ❤️",
+
+        url:window.location.href
+
+    };
+
+
+    if(navigator.share){
+
+        try{
+
+            await navigator.share(shareData);
+
+        }catch(error){}
+
+    }else{
+
+        try{
+
+            await navigator.clipboard.writeText(
+                window.location.href
+            );
+
+            alert("تم نسخ رابط الدعوة ❤️");
+
+        }catch(error){
+
+            alert("انسخ رابط الصفحة من المتصفح وشاركه مع ضيوفك.");
+
+        }
+
+    }
+
+});
+
+
+// =========================================
+// القلوب المتحركة
 // =========================================
 
 let heartInterval = null;
 
-function createHeart() {
+
+function createHeart(){
 
     const heart = document.createElement("div");
 
     heart.className = "heart";
-    heart.innerHTML = "❤️";
 
-    heart.style.position = "fixed";
+    heart.innerHTML =
+        '<i class="fa-solid fa-heart"></i>';
+
     heart.style.left =
         Math.random() * 100 + "vw";
 
     heart.style.top = "-30px";
 
+    heart.style.color =
+        "#c4a05b";
+
     heart.style.fontSize =
-        12 + Math.random() * 16 + "px";
+        10 + Math.random() * 14 + "px";
 
     heart.style.opacity =
-        0.25 + Math.random() * 0.5;
-
-    heart.style.pointerEvents = "none";
-    heart.style.zIndex = "9998";
+        0.15 + Math.random() * 0.4;
 
     document.body.appendChild(heart);
+
 
     const duration =
         5000 + Math.random() * 4000;
 
+
     const startX =
         Math.random() * 60 - 30;
+
 
     const endX =
         Math.random() * 100 - 50;
 
+
     const animation = heart.animate(
 
         [
+
             {
                 transform:
                     `translate(${startX}px,0) rotate(0deg)`
@@ -114,30 +176,37 @@ function createHeart() {
                 transform:
                     `translate(${endX}px,110vh) rotate(360deg)`
             }
+
         ],
 
         {
-            duration: duration,
-            easing: "linear"
+
+            duration:duration,
+
+            easing:"linear"
+
         }
 
     );
 
-    animation.onfinish = function () {
+
+    animation.onfinish = function(){
+
         heart.remove();
+
     };
 
 }
 
 
-function startHearts() {
+function startHearts(){
 
-    if (heartInterval) return;
+    if(heartInterval) return;
 
     createHeart();
 
     heartInterval =
-        setInterval(createHeart, 900);
+        setInterval(createHeart,1200);
 
 }
 
@@ -148,16 +217,11 @@ function startHearts() {
 
 const weddingDate =
     new Date(
-        "Octobar 9, 2026 19:00:00"
+        "October 10, 2026 19:00:00"
     ).getTime();
 
-const countdown =
-    document.getElementById("countdown");
 
-
-function updateCountdown() {
-
-    if (!countdown) return;
+function updateCountdown(){
 
     const now =
         new Date().getTime();
@@ -165,44 +229,79 @@ function updateCountdown() {
     const distance =
         weddingDate - now;
 
-    if (distance <= 0) {
 
-        countdown.innerHTML =
-            "🎉 بدأ الحفل ❤️";
+    const days =
+        document.getElementById("days");
+
+    const hours =
+        document.getElementById("hours");
+
+    const minutes =
+        document.getElementById("minutes");
+
+    const seconds =
+        document.getElementById("seconds");
+
+
+    if(distance <= 0){
+
+        days.textContent = "00";
+        hours.textContent = "00";
+        minutes.textContent = "00";
+        seconds.textContent = "00";
+
+        document.querySelector(
+            ".countdown-section h2"
+        ).textContent =
+            "اليوم هو يومنا الكبير ❤️";
 
         return;
 
     }
 
-    const days =
+
+    const d =
         Math.floor(
             distance /
             (1000 * 60 * 60 * 24)
         );
 
-    const hours =
+
+    const h =
         Math.floor(
             (distance %
-                (1000 * 60 * 60 * 24)) /
+            (1000 * 60 * 60 * 24)) /
             (1000 * 60 * 60)
         );
 
-    const minutes =
+
+    const m =
         Math.floor(
             (distance %
-                (1000 * 60 * 60)) /
+            (1000 * 60 * 60)) /
             (1000 * 60)
         );
 
-    const seconds =
+
+    const s =
         Math.floor(
             (distance %
-                (1000 * 60)) /
+            (1000 * 60)) /
             1000
         );
 
-    countdown.innerHTML =
-        `${days} يوم : ${hours} ساعة : ${minutes} دقيقة : ${seconds} ثانية`;
+
+    days.textContent =
+        String(d).padStart(2,"0");
+
+    hours.textContent =
+        String(h).padStart(2,"0");
+
+    minutes.textContent =
+        String(m).padStart(2,"0");
+
+    seconds.textContent =
+        String(s).padStart(2,"0");
 
 }
 
@@ -216,29 +315,102 @@ setInterval(
 
 
 // =========================================
+// RSVP
+// =========================================
+
+let rsvpList =
+    JSON.parse(
+        localStorage.getItem("weddingRSVP")
+    ) || [];
+
+
+function sendRSVP(status){
+
+    const nameInput =
+        document.getElementById("rsvpName");
+
+    const result =
+        document.getElementById("rsvpResult");
+
+
+    const name =
+        nameInput.value.trim();
+
+
+    if(!name){
+
+        result.textContent =
+            "من فضلك اكتب اسمك أولًا ❤️";
+
+        return;
+
+    }
+
+
+    rsvpList.unshift({
+
+        name:name,
+
+        status:status,
+
+        date:
+            new Date()
+            .toLocaleDateString("ar-EG")
+
+    });
+
+
+    localStorage.setItem(
+        "weddingRSVP",
+        JSON.stringify(rsvpList)
+    );
+
+
+    if(status === "yes"){
+
+        result.textContent =
+            "شكرًا يا " + name +
+            " ❤️ في انتظارك في يومنا الكبير!";
+
+    }else{
+
+        result.textContent =
+            "شكرًا يا " + name +
+            " ❤️ نتمنى أن نراك في مناسبة قادمة.";
+
+    }
+
+
+    nameInput.value = "";
+
+}
+
+
+// =========================================
 // الرسائل
 // =========================================
 
 let messages =
     JSON.parse(
-        localStorage.getItem("messages")
+        localStorage.getItem("weddingMessages")
     ) || [];
 
 
-function sendMessage() {
+function sendMessage(){
 
     const name =
         document.getElementById("name")
-            .value
-            .trim();
+        .value
+        .trim();
+
 
     const message =
         document.getElementById("message")
-            .value
-            .trim();
+        .value
+        .trim();
 
 
-    if (!name || !message) {
+    if(!name || !message){
 
         alert(
             "من فضلك اكتب اسمك ورسالتك ❤️"
@@ -251,19 +423,19 @@ function sendMessage() {
 
     messages.unshift({
 
-        name: name,
+        name:name,
 
-        message: message,
+        message:message,
 
         date:
             new Date()
-                .toLocaleDateString("ar-EG")
+            .toLocaleDateString("ar-EG")
 
     });
 
 
     localStorage.setItem(
-        "messages",
+        "weddingMessages",
         JSON.stringify(messages)
     );
 
@@ -273,37 +445,100 @@ function sendMessage() {
     document.getElementById("message").value = "";
 
 
-    showMessages();
+    alert(
+        "تم إرسال تهنئتك بنجاح ❤️"
+    );
 
 }
 
 
-function showMessages() {
+// =========================================
+// أرشيف التهاني
+// =========================================
+
+function openArchive(){
+
+    const passwordBox =
+        document.getElementById(
+            "passwordBox"
+        );
+
+
+    passwordBox.style.display =
+        passwordBox.style.display === "block"
+            ? "none"
+            : "block";
+
+}
+
+
+function checkArchivePassword(){
+
+    const password =
+        document.getElementById(
+            "archivePassword"
+        ).value;
+
+
+    const passwordError =
+        document.getElementById(
+            "passwordError"
+        );
+
+
+    // غيّر كلمة المرور هنا
+    const correctPassword =
+        "1234";
+
+
+    if(password === correctPassword){
+
+        passwordError.textContent = "";
+
+
+        document.getElementById(
+            "allMessages"
+        ).style.display = "block";
+
+
+        showMessages();
+
+    }else{
+
+        passwordError.textContent =
+            "كلمة المرور غير صحيحة";
+
+    }
+
+}
+
+
+function showMessages(){
 
     const allMessages =
         document.getElementById(
             "allMessages"
         );
 
-    if (!allMessages) return;
-
 
     allMessages.innerHTML = "";
 
 
-    if (messages.length === 0) {
+    if(messages.length === 0){
 
         allMessages.innerHTML =
-            `<p class="empty-messages">
+            `
+            <p class="empty-messages">
                 لا توجد تهنئات حتى الآن ❤️
-            </p>`;
+            </p>
+            `;
 
         return;
 
     }
 
 
-    messages.forEach(function (item) {
+    messages.forEach(function(item){
 
         const msg =
             document.createElement("div");
@@ -315,7 +550,7 @@ function showMessages() {
             document.createElement("h3");
 
         title.textContent =
-            "💖 " + item.name;
+            "♥ " + item.name;
 
 
         const text =
@@ -333,7 +568,9 @@ function showMessages() {
 
 
         msg.appendChild(title);
+
         msg.appendChild(text);
+
         msg.appendChild(date);
 
 
@@ -344,174 +581,247 @@ function showMessages() {
 }
 
 
-showMessages();
-
-
 // =========================================
-// أرشيف التهاني
+// Gallery Lightbox
 // =========================================
 
-function openArchive() {
-
-    const passwordBox =
-        document.getElementById(
-            "passwordBox"
-        );
-
-    passwordBox.style.display =
-        passwordBox.style.display === "block"
-            ? "none"
-            : "block";
-
-}
-
-
-function checkArchivePassword() {
-
-    const password =
-        document.getElementById(
-            "archivePassword"
-        ).value;
-
-    const passwordError =
-        document.getElementById(
-            "passwordError"
-        );
-
-
-    // غيّر كلمة المرور هنا
-    const correctPassword =
-        "1234";
-
-
-    if (password === correctPassword) {
-
-        passwordError.textContent = "";
-
-        document.getElementById(
-            "allMessages"
-        ).style.display = "block";
-
-        showMessages();
-
-    } else {
-
-        passwordError.textContent =
-            "كلمة المرور غير صحيحة ❌";
-
-    }
-
-}
-
-
-// إخفاء الرسائل في البداية
-document.getElementById(
-    "allMessages"
-).style.display = "none";
-
-
-// =========================================
-// ظهور الكروت
-// =========================================
-
-const cards =
-    document.querySelectorAll(".card");
-
-
-cards.forEach(function (card) {
-
-    card.style.opacity = "0";
-
-    card.style.transform =
-        "translateY(60px)";
-
-    card.style.transition =
-        "opacity .8s ease, transform .8s ease";
-
-});
-
-
-function revealCards() {
-
-    cards.forEach(function (card) {
-
-        const top =
-            card.getBoundingClientRect().top;
-
-
-        if (
-            top <
-            window.innerHeight - 100
-        ) {
-
-            card.style.opacity = "1";
-
-            card.style.transform =
-                "translateY(0)";
-
-        }
-
-    });
-
-}
-
-
-// =========================================
-// ظهور الأقسام
-// =========================================
-
-const sections =
+const galleryItems =
     document.querySelectorAll(
-        ".gallery, .messages, .thanks"
+        ".gallery-item"
     );
 
 
-sections.forEach(function (section) {
-
-    section.style.opacity = "0";
-
-    section.style.transform =
-        "translateY(60px)";
-
-    section.style.transition =
-        "opacity 1s ease, transform 1s ease";
-
-});
+const lightbox =
+    document.getElementById(
+        "lightbox"
+    );
 
 
-function revealSections() {
-
-    sections.forEach(function (section) {
-
-        const top =
-            section.getBoundingClientRect().top;
+const lightboxImage =
+    document.getElementById(
+        "lightboxImage"
+    );
 
 
-        if (
-            top <
-            window.innerHeight - 100
-        ) {
+const closeLightbox =
+    document.getElementById(
+        "closeLightbox"
+    );
 
-            section.style.opacity = "1";
 
-            section.style.transform =
-                "translateY(0)";
+const prevImage =
+    document.getElementById(
+        "prevImage"
+    );
+
+
+const nextImage =
+    document.getElementById(
+        "nextImage"
+    );
+
+
+const galleryImages =
+    Array.from(
+        document.querySelectorAll(
+            ".gallery-item img"
+        )
+    );
+
+
+let currentImage = 0;
+
+
+galleryItems.forEach(
+    function(item,index){
+
+        item.addEventListener(
+            "click",
+            function(){
+
+                currentImage = index;
+
+                showLightboxImage();
+
+                lightbox.classList.add(
+                    "active"
+                );
+
+            }
+        );
+
+    }
+);
+
+
+function showLightboxImage(){
+
+    lightboxImage.src =
+        galleryImages[
+            currentImage
+        ].src;
+
+}
+
+
+closeLightbox.addEventListener(
+    "click",
+    function(){
+
+        lightbox.classList.remove(
+            "active"
+        );
+
+    }
+);
+
+
+prevImage.addEventListener(
+    "click",
+    function(){
+
+        currentImage--;
+
+        if(currentImage < 0){
+
+            currentImage =
+                galleryImages.length - 1;
 
         }
 
-    });
+        showLightboxImage();
+
+    }
+);
+
+
+nextImage.addEventListener(
+    "click",
+    function(){
+
+        currentImage++;
+
+        if(
+            currentImage >=
+            galleryImages.length
+        ){
+
+            currentImage = 0;
+
+        }
+
+        showLightboxImage();
+
+    }
+);
+
+
+lightbox.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === lightbox){
+
+            lightbox.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(
+            !lightbox.classList.contains(
+                "active"
+            )
+        ){
+
+            return;
+
+        }
+
+
+        if(e.key === "Escape"){
+
+            lightbox.classList.remove(
+                "active"
+            );
+
+        }
+
+
+        if(e.key === "ArrowLeft"){
+
+            nextImage.click();
+
+        }
+
+
+        if(e.key === "ArrowRight"){
+
+            prevImage.click();
+
+        }
+
+    }
+);
+
+
+// =========================================
+// Scroll Reveal
+// =========================================
+
+const revealTargets =
+    document.querySelectorAll(
+        ".quick-box, .detail-card, .timeline-item, .gallery-item, .rsvp-box, .message-form, .thanks"
+    );
+
+
+revealTargets.forEach(
+    function(element){
+
+        element.classList.add("reveal");
+
+    }
+);
+
+
+function revealElements(){
+
+    revealTargets.forEach(
+        function(element){
+
+            const position =
+                element.getBoundingClientRect()
+                .top;
+
+
+            if(
+                position <
+                window.innerHeight - 80
+            ){
+
+                element.classList.add(
+                    "show"
+                );
+
+            }
+
+        }
+    );
 
 }
 
 
 window.addEventListener(
     "scroll",
-    function () {
-
-        revealCards();
-        revealSections();
-
-    }
+    revealElements
 );
 
 
@@ -521,13 +831,13 @@ window.addEventListener(
 
 window.addEventListener(
     "beforeunload",
-    function () {
+    function(){
 
-        if (heartInterval) {
+        if(heartInterval){
 
-            clearInterval(heartInterval);
-
-            heartInterval = null;
+            clearInterval(
+                heartInterval
+            );
 
         }
 
@@ -540,5 +850,5 @@ window.addEventListener(
 // =========================================
 
 console.log(
-    "❤️ Wedding Invitation Loaded Successfully ❤️"
+    "Mohamed & Mariam Wedding Invitation Loaded ❤️"
 );
