@@ -217,7 +217,7 @@ function startHearts(){
 
 const weddingDate =
     new Date(
-        "October 10, 2026 19:00:00"
+        "November 20, 2026 19:00:00"
     ).getTime();
 
 
